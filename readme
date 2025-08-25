@@ -1,0 +1,170 @@
+Steps to create the app
+Tools: 
+Veepeak OBDCheck BLE Bluetooth OBD II Scanner Car Check Engine Light Code Reader, Auto Dual Mode Bluetooth Diagnostic Scan Tool for iOS & Android
+Used to scan the car’s computer to see if the indicator light is on
+https://www.amazon.com/Veepeak-OBDCheck-Bluetooth-Diagnostic-Supports/dp/B073XKQQQW/?_encoding=UTF8&pd_rd_w=9SeT8&content-id=amzn1.sym.4efc43db-939e-4a80-abaf-50c6a6b8c631%3Aamzn1.symc.5a16118f-86f0-44cd-8e3e-6c5f82df43d0&pf_rd_p=4efc43db-939e-4a80-abaf-50c6a6b8c631&pf_rd_r=ECZ5YT4PA5EKS91GF8MJ&pd_rd_wg=XhjcI&pd_rd_r=fbe7385a-c548-4dfe-9fdb-09f6eac55766&ref_=pd_hp_d_atf_ci_mcx_mr_ca_hp_atf_d 
+$32
+
+1. The End-to-End System:
+A mobile app that can connect to the dongle via Bluetooth.
+The ability to start and stop a "trip" (e.g., a "Start Drive" button and an "End Drive" button).
+The app must be able to receive raw data from the dongle while the user is driving.
+The app must securely send the raw trip data to your backend server.
+Your backend server must receive, store, and process the data.
+The server must run your scoring algorithm to generate a single, simple score for that trip.
+The app must be able to display the score to the user at the end of the trip.
+2. The App's User Interface (UI):
+Onboarding: A simple screen that guides the user to plug in the dongle and pair it with their phone.
+Dashboard: A basic home screen with a single "Start Drive" button.
+Trip Summary: One screen that shows the final score for the completed trip and a simple map of the route.
+3. The Map Integration:
+Display a map of the trip.
+Use a single type of marker (e.g., a pin) to indicate where a turn was made, and whether an indicator was used. This is enough to prove the concept without complex color-coding.
+
+Bluetooth connections:
+For both IOS and Android:
+Request Permissions: Your app must ask the user for permission to use Bluetooth and Location services.
+Scan for Devices: Your app will scan for nearby BLE devices that are advertising their services. You'll filter for the Veepeak dongle by its name (VEEPEAK) or service ID.
+Connect to the Device: Once you find the Veepeak, your app will initiate a connection to it.
+Read and Write Data: After a successful connection, your app can read data from and write commands to the dongle.
+IOS Connections: 
+iOS has a robust framework for handling BLE called Core Bluetooth.
+Declare Permissions: In your Info.plist file, you must add a key called NSBluetoothAlwaysUsageDescription with a string explaining why your app needs to use Bluetooth. For example: "We need Bluetooth to connect to your OBD-II device to track your driving."
+Implement the Code:
+Create an instance of CBCentralManager. This object represents your app as the "central" device that will manage connections.
+The central manager will notify your app about its state changes (e.g., if Bluetooth is powered on).
+Use scanForPeripherals(withServices:options:) to start scanning for devices. You can scan for a specific service UUID or for all available devices.
+When a device is discovered, your app will get a callback with a CBPeripheral object. You can check the peripheral's name to see if it matches "VEEPEAK".
+Call connect(peripheral:) to connect to the dongle.
+Once connected, you will discover the dongle's services and characteristics by calling discoverServices() and discoverCharacteristics(). The OBD-II data is contained within a specific characteristic.
+Use readValue(for:) and writeValue(_:for:type:) to read data from and write commands to the dongle.
+Android Connections:
+Declare Permissions: In your AndroidManifest.xml file, you must declare several permissions:
+BLUETOOTH_CONNECT: To connect to paired devices.
+BLUETOOTH_SCAN: To scan for nearby Bluetooth devices.
+ACCESS_FINE_LOCATION: Required for BLE scanning on Android 6.0 (Marshmallow) and higher.
+Request Runtime Permissions: For Android 6.0 and above, you must ask the user for permission at runtime. This means your app will show a pop-up to the user asking for permission to access Bluetooth and location.
+Implement the Code:
+Get a BluetoothManager instance.
+Use BluetoothLeScanner to start scanning for nearby BLE devices. You will get a list of devices in a callback method.
+In the callback, check the device name to see if it matches "VEEPEAK".
+Once you find the device, call connectGatt() to establish a connection.
+After connecting, you will discover the device's GATT services and characteristics. The OBD-II data is transmitted through a specific characteristic that you will need to find in the dongle's documentation.
+Use readCharacteristic() or writeCharacteristic() to send your PID commands and read the response.
+specific GATT service and characteristic UUIDs that you will use to communicate with the dongle.
+Buttons
+Start ride
+Stop ride	
+Name Ideas
+Indicatory
+
+
+
+Terms and Conditions for app (Temporary):
+Terms and Conditions for Indicatory
+Last Updated: [Date]
+Welcome to the Indicatory mobile application (the "App"), a service provided by [Your Company Name] ("we," "us," or "our"). These Terms and Conditions ("Terms") govern your use of the App and its related services.
+By installing, accessing, or using the App, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, you must not use the App.
+1. Description of Service
+Indicatory is a driving analytics and gamification application that uses an OBD-II dongle to collect vehicle data and provide feedback on driving habits, including turn signal usage. The App is intended for your personal, non-commercial use to improve your driving skills and track your performance.
+2. User Accounts and Data
+You may need to create an account to use the App. You are responsible for maintaining the confidentiality of your account password and for all activities that occur under your account.
+Data Collection: By using the App, you consent to the collection and use of your driving data, which may include your location, speed, acceleration, braking, and turn signal usage.
+Privacy: Our Privacy Policy explains how we collect, use, and protect your personal information. It is part of these Terms, and by agreeing to these Terms, you also agree to our Privacy Policy.
+3. Your Responsibilities
+Safe Driving: You must not use the App while driving. The App is designed to provide analysis after a trip is completed or to be used by a passenger. Distracted driving is dangerous and illegal.
+Authorized Use: You agree to use the App and the data it collects solely for your personal use and in a manner that does not violate any laws, regulations, or third-party rights.
+Hardware: You are responsible for the proper installation and use of any third-party OBD-II dongle. We are not responsible for any damage to your vehicle or any other property that may result from the installation or use of such a device.
+4. Intellectual Property
+All content, features, and functionality of the App, including but not limited to all information, software, and design, are and will remain the exclusive property of [Your Company Name] and its licensors. You may not copy, modify, or distribute any part of the App without our express written permission.
+5. Disclaimer of Warranties
+The App is provided on an "as is" and "as available" basis. We make no warranties of any kind, whether express, implied, statutory, or otherwise, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not guarantee that the App will be uninterrupted, error-free, or secure.
+6. Limitation of Liability
+To the maximum extent permitted by law, in no event shall [Your Company Name] be liable for any indirect, incidental, special, consequential, or punitive damages, or any loss of profits or revenues, whether incurred directly or indirectly, or any loss of data, use, goodwill, or other intangible losses, resulting from (a) your use or inability to use the App; (b) any unauthorized access to or use of your account or data; or (c) any conduct or content of any third party on the App.
+7. Termination
+We may terminate or suspend your access to the App immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.
+8. Changes to These Terms
+We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will notify you of any changes by posting the new Terms on this page. By continuing to access or use the App after those revisions become effective, you agree to be bound by the revised Terms.
+9. Governing Law
+These Terms shall be governed and construed in accordance with the laws of [Your State/Country], without regard to its conflict of law provisions.
+10. Contact Us
+If you have any questions about these Terms, please contact us at:
+Email: [Your Contact Email]
+
+Database:
+Firestore is a NoSQL, document-based database that is part of the Firebase platform.
+
+Full Stack: 
+
+Stack Layer	
+Technology
+Why It's the Right Choice
+Frontend (Mobile App)
+React Native	
+- Cross-Platform: Write a single codebase for both iOS and Android. This is the single biggest time-saver for a solo founder.<br>- Popular: Huge community, extensive libraries, and great documentation.
+Backend (Server & API)
+Firebase & Google Cloud Functions
+- Serverless: No server management required. You write code, and Firebase runs it.<br>- Scalable: Automatically handles millions of requests.<br>- Integration: Seamlessly connects with Firestore and other Firebase services.
+Database
+Google Cloud Firestore	
+- Real-time Sync: Instantly updates your app's UI with new data.<br>- Flexible: The document-based model is perfect for your evolving data needs.<br>- Free Tier: Allows you to get started for free.
+Authentication	
+Google Cloud Firestore	
+- Secure: Provides a ready-to-use, robust authentication system (email/password, social logins, etc.).<br>- Easy to Implement: Handles all the complex security details for you.
+Mapping
+React Native Maps	
+- Cross-Platform: A single library for both Apple Maps and Google Maps.<br>- Customizable: Allows you to draw routes, place markers, and color-code the map to match your UI.
+Bluetooth	
+react-native-ble-plx	
+- BLE Support: This is a popular and well-maintained library specifically for Bluetooth Low Energy, which the Veepeak dongle uses.<br>- Streamlined API: Simplifies the process of scanning, connecting, and communicating with the dongle.
+
+
+
+Screen Info:
+
+1. Onboarding & Setup ⚙️
+These pages guide the user through the initial setup, from downloading the app to connecting the dongle.
+Welcome/Intro Screen: A simple screen with a brief explanation of the app and a button to get started.
+Bluetooth Pairing Screen: This screen will have instructions on how to plug in the dongle and will manage the Bluetooth connection. You can use an animated graphic or a series of simple illustrations to show the process.
+Permissions Screen: This page will request the necessary permissions from the user, such as Bluetooth and Location, with a brief explanation of why they are needed.
+
+2. The Core App Functionality 🚗
+This is the main dashboard and the driving screen.
+Main Dashboard: This is the primary home screen of your app. It should feature a large, prominent button to start a new drive and a high-level summary of the user's overall driving score.
+Live Driving Screen: A simple, minimalist screen that shows the user their trip is in progress. Avoid clutter. It should show a timer and a map of their current route.
+
+3. Post-Trip Review & History 🏆
+These pages deliver the core value of your app: the score and the feedback.
+Trip Summary Screen: This is the most important page. It should display the final driving score for the trip and a visual summary of the drive. The screen should have three key elements:
+The final score (e.g., a large number or a simple gauge).
+An embedded map showing the route.
+A simple list of events (e.g., "3 sharp turns detected," "Used indicator on all turns").
+Trip History Screen: A simple list of all past trips. Each item on the list should show the date, a short summary (e.g., "Good Drive"), and a simple score. Tapping an item should lead to the detailed Trip Summary screen.
+Colors: 
+
+Color
+Primary colors: 
+#1e1e1e	
+The dominant color for all backgrounds and screens. This deep charcoal is easy on the eyes and provides a perfect canvas for all car and UI colors.
+
+Primary Accent:	
+#00FFFF	
+Used for key action buttons, data visualizations, and your high-score indicator. This electric cyan represents progress, technology, and a clean, fresh feel.
+
+Secondary Accent:
+#FF6600	
+This bright orange should be used sparingly for warnings, error states (like a poor driving score), or to draw attention to important, but not primary, information.
+
+Main Text:
+#F5F5F5	
+A slightly off-white color that is highly readable on the dark background without causing eye strain.
+
+Secondary Text:	
+#888888	
+A lighter gray for subheadings, descriptive text, and less important information to create a visual hierarchy.
+
+
+
+
+
+
