@@ -5,7 +5,10 @@ import { createStackNavigator } from '@react-navigation/stack';
 // Import all of your screen components here
 import WelcomeScreen from './components/WelcomeScreen';
 import PermissionsScreen from './components/PermissionsScreen';
-import Dashboard from './components/MainDashboardScreen'
+import MainDashboardScreen from './components/MainDashboardScreen'
+import LiveDrivingScreen from './components/LiveDrivingScreen'
+import TripHistoryScreen from './components/TripHistoryScreen'
+import TripSummaryScreen from './components/TripSummaryScreen'
 
 
 const Stack = createStackNavigator();
@@ -16,7 +19,10 @@ export default function App() {
       <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} />
-        <Stack.Screen name='Dashboard' component={MainDashboardScreen}/>
+        <Stack.Screen name='MainDashboardScreen' component={MainDashboardScreen}/>
+        <Stack.Screen name = 'LiveDrivingSceen' component={LiveDrivingScreen}/>  
+        <Stack.Screen name = 'TripHistoryScreen' component={TripHistoryScreen}/>  
+        <Stack.Screen name = 'TripSummaryScreen' component={TripSummaryScreen}/>  
       </Stack.Navigator>
     </NavigationContainer>
   );
