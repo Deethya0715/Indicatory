@@ -26,7 +26,7 @@ const PermissionsScreen = ({ navigation }) => {
         <View style = {styles.SecondaryContainter}>
           <Text style={styles.headingText}>Location Services</Text>
           <Text style = {styles.bodyText}>Location access allows us to map your routes, identify driving events (like harsh braking), and provide accurate trip summaries.</Text>
-        </View>        
+        </View>
         
         {/* The call-to-action button */}
         <TouchableOpacity style={styles.button} onPress={handlePress}>
@@ -91,7 +91,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flex: 2,
     paddingTop: 50,
-
   },
   button: {
     backgroundColor: '#00FFFF',
