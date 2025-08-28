@@ -1,3 +1,4 @@
+// WelcomeScreen.js
 import React from 'react';
 import { Image, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 

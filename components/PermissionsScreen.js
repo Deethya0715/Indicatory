@@ -1,3 +1,4 @@
+// PermissionsScreen.js
 import React from 'react';
 import { Image, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
 
@@ -15,7 +16,7 @@ const PermissionsScreen = ({ navigation }) => {
       <View style={styles.content}>
         {/* The App's Logo/Title */}
         <Text style={styles.title}>Permissions Required</Text>
-        <Text style={styles.body}>To ensure DriveScore can accuratey monitor your driving and provide real-time feedback, we require access to Bluetooth and Location services.</Text>
+        <Text style={styles.body}>To ensure DriveScore can accurately monitor your driving and provide real-time feedback, we require access to Bluetooth and Location services.</Text>
         
         <View style = {styles.SecondaryContainter}>
           <Text style={styles.headingText}>Bluetooth Connection</Text>
@@ -25,7 +26,7 @@ const PermissionsScreen = ({ navigation }) => {
         <View style = {styles.SecondaryContainter}>
           <Text style={styles.headingText}>Location Services</Text>
           <Text style = {styles.bodyText}>Location access allows us to map your routes, identify driving events (like harsh braking), and provide accurate trip summaries.</Text>
-        </View>        
+        </View>        
         
         {/* The call-to-action button */}
         <TouchableOpacity style={styles.button} onPress={handlePress}>
@@ -129,3 +130,5 @@ const styles = StyleSheet.create({
 });
 
 export default PermissionsScreen;
+
+
