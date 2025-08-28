@@ -16,8 +16,8 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Welcome" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+      <Stack.Navigator initialRouteName="WelcomeScreen" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} />
         <Stack.Screen name='MainDashboardScreen' component={MainDashboardScreen}/>
         <Stack.Screen name = 'LiveDrivingSceen' component={LiveDrivingScreen}/>  
