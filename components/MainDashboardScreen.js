@@ -20,7 +20,7 @@ const MainDashboardScreen = ({ navigation }) => {
           <Text style={styles.scoreFeedback}>Excellent! Keep up the great driving habits.</Text>
         </View>
         {/* Start Drive Button */}
-        <TouchableOpacity style={styles.startDriveButton}>
+        <TouchableOpacity style={styles.startDriveButton} onPress={() => navigation.navigate('LiveDrivingScreen')}>
           <Text style={styles.startDriveButtonText}>Start Drive</Text>
         </TouchableOpacity>
         {/* Driving Insights */}
@@ -48,37 +48,40 @@ const MainDashboardScreen = ({ navigation }) => {
         </View>
         {/* Recent Activity */}
         <Text style={styles.sectionTitle}>RECENT ACTIVITY</Text>
-        <View style={styles.activityCard}>
-          <Icon name="check-circle-outline" size={24} color="#00BFFF" style={styles.activityIcon} />
-          <View style={styles.activityContent}>
-            <Text style={styles.activityTitle}>Trip Completed</Text>
-            <Text style={styles.activityText}>Achieved a perfect score on your morning commute.</Text>
-            <Text style={styles.activityTime}>10 mins ago</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.activityScroll} contentContainerStyle={styles.activityScrollContent}>
+          <View style={styles.activityCard}>
+            <Icon name="check-circle-outline" size={24} color="#00BFFF" style={styles.activityIcon} />
+            <View style={styles.activityContent}>
+              <Text style={styles.activityTitle}>Trip Completed</Text>
+              <Text style={styles.activityText}>Achieved a perfect score on your morning commute.</Text>
+              <Text style={styles.activityTime}>10 mins ago</Text>
+            </View>
           </View>
-        </View>
-        <View style={styles.activityCard}>
-          <Icon name="star-outline" size={24} color="#00BFFF" style={styles.activityIcon} />
-          <View style={styles.activityContent}>
-            <Text style={styles.activityTitle}>Score Improved</Text>
-            <Text style={styles.activityText}>Your driving score increased by 3 points.</Text>
-            <Text style={styles.activityTime}>2 hours ago</Text>
+          <View style={styles.activityCard}>
+            <Icon name="star-outline" size={24} color="#00BFFF" style={styles.activityIcon} />
+            <View style={styles.activityContent}>
+              <Text style={styles.activityTitle}>Score Improved</Text>
+              <Text style={styles.activityText}>Your driving score increased by 3 points.</Text>
+              <Text style={styles.activityTime}>2 hours ago</Text>
+            </View>
           </View>
-        </View>
+          {/* Add more activity cards here if needed */}
+        </ScrollView>
       </ScrollView>
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
-        <View style={styles.navItem}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MainDashboardScreen')}>
           <Icon name="home" size={24} color="#00BFFF" />
           <Text style={styles.navText}>Dashboard</Text>
-        </View>
-        <View style={styles.navItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('TripHistoryScreen')}>
           <Icon name="history" size={24} color="#fff" />
           <Text style={styles.navText}>History</Text>
-        </View>
-        <View style={styles.navItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfileScreen')}>
           <Icon name="account" size={24} color="#fff" />
           <Text style={styles.navText}>Profile</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -145,13 +148,18 @@ const styles = StyleSheet.create({
   },
   startDriveButton: {
     backgroundColor: '#00FFFF',
-    borderRadius: 10,
-    paddingVertical: 14,
+    paddingVertical: 16,
     paddingHorizontal: 32,
-    marginBottom: 24,
-    width: '90%',
-    maxWidth: 340,
+    borderRadius: 12,
+    marginTop: 12,
+    width: '100%',
+    maxWidth: 320,
     alignItems: 'center',
+    shadowColor: '#00BFFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
   },
   startDriveButtonText: {
     color: '#111',
@@ -196,15 +204,25 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 18,
   },
+  activityScroll: {
+    width: '100%',
+    maxHeight: 110,
+    marginBottom: 10,
+    paddingLeft: 10,
+  },
+  activityScrollContent: {
+    alignItems: 'center',
+    paddingRight: 10,
+  },
   activityCard: {
     backgroundColor: '#23262b',
     borderRadius: 16,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
-    marginBottom: 14,
-    width: '90%',
-    maxWidth: 340,
+    marginRight: 14,
+    width: 260,
+    maxWidth: 260,
   },
   activityIcon: {
     marginRight: 14,
