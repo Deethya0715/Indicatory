@@ -1,102 +1,171 @@
-import React from 'react';
-import { Image, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
-
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar, Image } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const LiveDrivingScreen = ({ navigation }) => {
-  // Function to handle the button press and navigate to the next screen
-  const handlePress = () => {
-    // In your final app, this will navigate to the Dashboard screen
-    navigation.navigate('TripSummaryScreen');
+  // Timer logic
+  const [seconds, setSeconds] = useState(330); // 5:30 in seconds
+  const [paused, setPaused] = useState(false);
+  const intervalRef = useRef(null);
+
+  useEffect(() => {
+    if (!paused) {
+      intervalRef.current = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    return () => clearInterval(intervalRef.current);
+  }, [paused]);
+
+  const formatTime = (secs) => {
+    const m = String(Math.floor(secs / 60)).padStart(2, '0');
+    const s = String(secs % 60).padStart(2, '0');
+    return `00:${m}:${s}`;
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
+      <View style={styles.header}>
+        <Icon name="arrow-left" size={28} color="#fff" style={styles.backIcon} />
+        <Text style={styles.headerText}>ON A DRIVE</Text>
+      </View>
       <View style={styles.content}>
-        {/* The Page's Title */}
-        <Text style={styles.title}>On a Drive</Text>
-
-        {/* Time is currently hard Coded/fixed time */}
-        <View>
-          <Text style={styles.timeFormatting}>10:30:00</Text>
+        <Text style={styles.timer}>{formatTime(seconds)}</Text>
+        <Text style={styles.drivingTime}>Driving Time</Text>
+        <View style={styles.mapContainer}>
+          {/* Replace with your map image if available */}
+          <Text style={styles.mapTitle}>ROUTE IN PROGRESS</Text>
         </View>
-
-        <View style = {styles.container}>
-          <Text style={styles.mapTextOverlay}>Bluetooth Connection</Text>
-          <Text style = {styles.bodyText}>Bluetooth is essential for connecting to your vehicle's DriveScore dongle, enabling seamless data collection during your trips.</Text>
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            style={[styles.pauseButton, paused && styles.resumeButton]}
+            onPress={() => setPaused((prev) => !prev)}>
+            <Icon name="pause" size={22} color={paused ? '#fff' : '#00FFFF'} style={styles.buttonIcon} />
+            <Text style={[styles.pauseButtonText, paused && styles.resumeButtonText]}>{paused ? 'Resume' : 'Pause'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.stopDriveButton} onPress={() => navigation.navigate('TripSummaryScreen')}>
+            <Icon name="stop" size={22} color="#fff" style={styles.buttonIcon} />
+            <Text style={styles.stopDriveButtonText}>Stop Drive</Text>
+          </TouchableOpacity>
         </View>
-          
-        {/* The call-to-action button */}
-        <TouchableOpacity style={styles.button} onPress={handlePress}>
-          <Text style={styles.buttonText}>Start Drive</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 };
-  
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1e1e1e', // Your dark gray background
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#1e1e1e',
+  },
+  header: {
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 24,
+    paddingBottom: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#222',
+  },
+  backIcon: {
+    position: 'absolute',
+    left: 20,
+    top: 24,
+  },
+  headerText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    letterSpacing: 1,
+    textAlign: 'center',
   },
   content: {
     flex: 1,
+    alignItems: 'center',
+    paddingTop: 24,
+  },
+  timer: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#00FFFF',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  drivingTime: {
+    color: '#fff',
+    fontSize: 18,
+    marginBottom: 18,
+  },
+  mapContainer: {
+    width: 380,
+    height: 220,
+    backgroundColor: '#e5e5e5',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+  mapTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 28,
+    textAlign: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  buttonRow: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  title: {
-    fontSize: 34,
-    fontWeight: 'bold',
-    color: '#F5F5F5',
-    textAlign: 'center',
     marginTop: 10,
-    marginBottom: 50,
-    paddingTop: 50,
   },
-  timeFormatting: {
-    fontSize: 47,
+  pauseButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#00FFFF',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    marginRight: 16,
+    backgroundColor: 'transparent',
+  },
+  pauseButtonText: {
+    color: '#00FFFF',
     fontWeight: 'bold',
-    color: '#00FFFF', // primary accent color
-    marginTop: 10,
-    marginBottom: 50,
-    textAlign: 'center',
-    paddingTop: 50,
+    fontSize: 18,
+    marginLeft: 8,
   },
-  mapTextOverlay: {
-    fontSize: 30,
+  resumeButton: {
+    backgroundColor: '#00BFFF',
+    borderColor: '#00BFFF',
+  },
+  resumeButtonText: {
+    color: '#fff',
+  },
+  stopDriveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#444',
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+  },
+  stopDriveButtonText: {
+    color: '#fff',
     fontWeight: 'bold',
-    color: '#F5F5F5',
+    fontSize: 18,
+    marginLeft: 8,
   },
-  bodyText: {
-    fontSize: 16,
-    color: '#F5F5F5',
-    marginTop: 10,
-    textAlign: 'center',
-  },
-  button: {
-    backgroundColor: '#00FFFF',
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    borderRadius: 30,
-    marginTop: 20,
-    shadowColor: '#00BFFF',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 10,
-  },
-  buttonText: {
-    color: '#f5f5f5',
-    fontSize: 16,
-    fontWeight: 'bold',
+  buttonIcon: {
+    marginRight: 0,
   },
 });
-
 
 export default LiveDrivingScreen;

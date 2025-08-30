@@ -22,7 +22,8 @@ export default function App() {
         <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} />
         <Stack.Screen name='MainDashboardScreen' component={MainDashboardScreen}/>
         <Stack.Screen name='LiveDrivingScreen' component={LiveDrivingScreen}/>          
-        <Stack.Screen name = 'TripHistoryScreen' component={TripHistoryScreen}/>  
+        <Stack.Screen name = 'TripHistoryScreen' component={TripHistoryScreen}/> 
+        <Stack.Screen name = 'TripSummaryScreen' component={TripSummaryScreen}/> 
         <Stack.Screen name = 'ProfileScreen' component={ProfileScreen}/>  
       </Stack.Navigator>
     </NavigationContainer>
