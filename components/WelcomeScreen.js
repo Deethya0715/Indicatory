@@ -15,7 +15,7 @@ const WelcomeScreen = ({ navigation }) => {
   // Function to handle the button press and navigate to the next screen
   const handlePress = () => {
     // In your final app, this will navigate to the Permissions screen
-    navigation.navigate('PermissionsScreen');
+    navigation.navigate('LoginScreen');
   };
 
 
@@ -39,6 +39,24 @@ const WelcomeScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    height: 56,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#222',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    letterSpacing: 1,
+    textAlign: 'center',
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#1e1e1e', // Your dark gray background

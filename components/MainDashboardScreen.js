@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const MainDashboardScreen = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>DASHBOARD</Text>
+    // The SafeAreaView ensures all content is placed below the status bar and within safe screen boundaries.
+    <SafeAreaView style={styles.container}>
+      {/* StatusBar component controls the appearance of the device's status bar. */}
+      <StatusBar barStyle="light-content" />
+      <View style={styles.headerBar}>
+        <Text style={styles.headerTitle}>DASHBOARD</Text>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Driving Score Card */}
@@ -83,11 +85,29 @@ const MainDashboardScreen = ({ navigation }) => {
           <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    height: 56,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#222',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    letterSpacing: 1,
+    textAlign: 'center',
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: '#111',

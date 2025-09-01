@@ -28,9 +28,13 @@ const LiveDrivingScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <View style={styles.header}>
-        <Icon name="arrow-left" size={28} color="#fff" style={styles.backIcon} />
-        <Text style={styles.headerText}>ON A DRIVE</Text>
+      <View style={styles.headerBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={28} color="#fff" />
+        </TouchableOpacity>
+        <View style={{ flex: 1, alignItems: 'center' }}>
+          <Text style={styles.headerTitle}>ON A DRIVE</Text>
+        </View>
       </View>
       <View style={styles.content}>
         <Text style={styles.timer}>{formatTime(seconds)}</Text>
@@ -57,6 +61,22 @@ const LiveDrivingScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  headerBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#000',
+    height: 56,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#222',
+  },
+  headerTitle: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 18,
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
   container: {
     flex: 1,
     backgroundColor: '#1e1e1e',
