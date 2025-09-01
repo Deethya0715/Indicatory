@@ -10,10 +10,6 @@ import LiveDrivingScreen from './components/LiveDrivingScreen'
 import TripHistoryScreen from './components/TripHistoryScreen'
 import TripSummaryScreen from './components/TripSummaryScreen'
 import ProfileScreen from './components/ProfileScreen';
-import LoginScreen from './components/LoginScreen';
-import SignUpScreen from './components/SignUpScreen';
-
-
 
 const Stack = createStackNavigator();
 
@@ -28,8 +24,6 @@ export default function App() {
         <Stack.Screen name = 'TripHistoryScreen' component={TripHistoryScreen}/> 
         <Stack.Screen name = 'TripSummaryScreen' component={TripSummaryScreen}/> 
         <Stack.Screen name = 'ProfileScreen' component={ProfileScreen}/>
-        <Stack.Screen name = 'LoginScreen' component={LoginScreen}/>  
-        <Stack.Screen name = 'SignUpScreen' component={SignUpScreen}/>
 
       </Stack.Navigator>
     </NavigationContainer>

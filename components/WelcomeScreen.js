@@ -15,7 +15,7 @@ const WelcomeScreen = ({ navigation }) => {
   // Function to handle the button press and navigate to the next screen
   const handlePress = () => {
     // In your final app, this will navigate to the Permissions screen
-    navigation.navigate('LoginScreen');
+    navigation.navigate('PermissionsScreen');
   };
 
 
