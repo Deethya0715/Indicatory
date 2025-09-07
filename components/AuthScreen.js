@@ -1,30 +1,14 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, Alert, SafeAreaView, StatusBar } from 'react-native';
-import{ useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
-// Combined and Corrected Firebase Imports
-import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { initializeAuth, getReactNativePersistence, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-// NOTE: For this example, Firebase config is placed here to make the file self-contained.
-// For a production app, you would place this in a separate config file and import it.
-const firebaseConfig = {
-  apiKey: "AIzaSyDnNNEyqHM66_xNXH0dHRITkhgZXeD8-cY",
-  authDomain: "indicatory-d57ad.firebaseapp.com",
-  projectId: "indicatory-d57ad",
-  storageBucket: "indicatory-d57ad.firebasestorage.app",
-  messagingSenderId: "930339817829",
-  appId: "1:930339817829:web:53db7db335a1b62f12398c",
-};
+// Import the initialized auth and db services from your config file.
+// The Firebase app is initialized in FirebaseConfig.js, so we don't
+// need to do it here.
+import { auth, db } from '../FirebaseConfig';
 
-const app = initializeApp(firebaseConfig);
+import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
-// CORRECTED AUTHENTICATION INITIALIZATION WITH ASYNC STORAGE
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-});
-
-const db = getFirestore(app);
 
 const AuthScreen = ({ navigation }) => {
   const [isLogin, setIsLogin] = useState(true);
@@ -37,9 +21,8 @@ const AuthScreen = ({ navigation }) => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setIsAuthenticated(!!currentUser);
       if (currentUser) {
-        // You'll need to make sure 'Main' is a valid screen name in your App.js navigator
-        // For example: navigation.navigate('MainDashboardScreen');
-        navigation.navigate('Main'); 
+        // Correct navigation to a screen defined in your App.js
+        navigation.navigate('MainDashboardScreen'); 
       }
     });
     return () => unsubscribe();

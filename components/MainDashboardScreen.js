@@ -1,19 +1,26 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { signOut } from 'firebase/auth';
+import { auth } from '../FirebaseConfig';
 
 const MainDashboardScreen = ({ navigation }) => {
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      // Navigate to the WelcomeScreen after successful sign out
+      navigation.navigate('WelcomeScreen');
+    } catch (error) {
+      Alert.alert('Sign Out Error', error.message);
+    }
+  };
+
   return (
-    // The SafeAreaView ensures all content is placed below the status bar and within safe screen boundaries.
     <SafeAreaView style={styles.container}>
-      {/* StatusBar component controls the appearance of the device's status bar. */}
       <StatusBar barStyle="light-content" />
       <View style={styles.headerBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-left" size={28} color="#fff" />
-        </TouchableOpacity>
         <Text style={styles.headerTitle}>DASHBOARD</Text>
-        </View>
+      </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Driving Score Card */}
         <View style={styles.scoreCard}>
@@ -70,8 +77,11 @@ const MainDashboardScreen = ({ navigation }) => {
               <Text style={styles.activityTime}>2 hours ago</Text>
             </View>
           </View>
-          {/* Add more activity cards here if needed */}
         </ScrollView>
+        {/* Sign Out Button */}
+        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+          <Text style={styles.signOutButtonText}>Sign Out</Text>
+        </TouchableOpacity>
       </ScrollView>
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
@@ -291,6 +301,26 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     marginTop: 2,
+  },
+  signOutButton: {
+    width: '90%',
+    height: 50,
+    backgroundColor: '#f44336',
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 20,
+    shadowColor: '#d32f2f',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 10,
+  },
+  signOutButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
