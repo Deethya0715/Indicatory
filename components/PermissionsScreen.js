@@ -9,7 +9,7 @@ const PermissionsScreen = ({ navigation }) => {
     // In your final app, this will navigate to the Dashboard screen
     navigation.navigate('MainDashboardScreen');
   };
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />

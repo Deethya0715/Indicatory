@@ -9,8 +9,11 @@ const MainDashboardScreen = ({ navigation }) => {
       {/* StatusBar component controls the appearance of the device's status bar. */}
       <StatusBar barStyle="light-content" />
       <View style={styles.headerBar}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="arrow-left" size={28} color="#fff" />
+        </TouchableOpacity>
         <Text style={styles.headerTitle}>DASHBOARD</Text>
-      </View>
+        </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Driving Score Card */}
         <View style={styles.scoreCard}>

@@ -10,6 +10,7 @@ import LiveDrivingScreen from './components/LiveDrivingScreen'
 import TripHistoryScreen from './components/TripHistoryScreen'
 import TripSummaryScreen from './components/TripSummaryScreen'
 import ProfileScreen from './components/ProfileScreen';
+import AuthScreen from './components/AuthScreen';
 
 const Stack = createStackNavigator();
 
@@ -20,10 +21,11 @@ export default function App() {
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="PermissionsScreen" component={PermissionsScreen} />
         <Stack.Screen name='MainDashboardScreen' component={MainDashboardScreen}/>
-        <Stack.Screen name='LiveDrivingScreen' component={LiveDrivingScreen}/>          
+        <Stack.Screen name='LiveDrivingScreen' component={LiveDrivingScreen}/>        
         <Stack.Screen name = 'TripHistoryScreen' component={TripHistoryScreen}/> 
         <Stack.Screen name = 'TripSummaryScreen' component={TripSummaryScreen}/> 
         <Stack.Screen name = 'ProfileScreen' component={ProfileScreen}/>
+        <Stack.Screen name = 'AuthScreen' component={AuthScreen}/>
 
       </Stack.Navigator>
     </NavigationContainer>

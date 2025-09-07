@@ -1,6 +1,7 @@
 // WelcomeScreen.js
-import React from 'react';
 import { Image, View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } from 'react-native';
+import React from 'react'; // This is the corrected line
+import { useState, useEffect } from 'react';
 
 const Logo = ({ style }) => {
   return (
@@ -15,10 +16,8 @@ const WelcomeScreen = ({ navigation }) => {
   // Function to handle the button press and navigate to the next screen
   const handlePress = () => {
     // In your final app, this will navigate to the Permissions screen
-    navigation.navigate('PermissionsScreen');
+    navigation.navigate('AuthScreen');
   };
-
-
 
   return (
     <SafeAreaView style={styles.container}>
