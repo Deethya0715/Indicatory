@@ -14,6 +14,10 @@ const AuthScreen = ({ navigation }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [vehicle, setVehicle] = useState('');
+  const [location, setLocation] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -37,6 +41,10 @@ const AuthScreen = ({ navigation }) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         await setDoc(doc(db, "users", userCredential.user.uid), {
           email: userCredential.user.email,
+          name: name,
+          vehicle: vehicle,
+          location: location,
+          phone: phone,
           createdAt: new Date(),
         });
       }
@@ -90,6 +98,39 @@ const AuthScreen = ({ navigation }) => {
           onChangeText={setPassword}
           secureTextEntry
         />
+        {!isLogin && (
+          <>
+            <TextInput
+              style={styles.input}
+              placeholder="Full Name"
+              placeholderTextColor="#666"
+              value={name}
+              onChangeText={setName}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Vehicle (e.g., Toyota Camry)"
+              placeholderTextColor="#666"
+              value={vehicle}
+              onChangeText={setVehicle}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Location (e.g., San Francisco, CA)"
+              placeholderTextColor="#666"
+              value={location}
+              onChangeText={setLocation}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Phone Number"
+              placeholderTextColor="#666"
+              value={phone}
+              onChangeText={setPhone}
+              keyboardType="phone-pad"
+            />
+          </>
+        )}
         <TouchableOpacity style={styles.button} onPress={handleAuth}>
           <Text style={styles.buttonText}>{isLogin ? 'Log In' : 'Sign Up'}</Text>
         </TouchableOpacity>

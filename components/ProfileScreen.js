@@ -1,8 +1,58 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, StatusBar, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { signOut } from 'firebase/auth';
+import { auth, db } from '../FirebaseConfig';
 
 const ProfileScreen = ({ navigation }) => {
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) {
+      navigation.navigate('WelcomeScreen');
+      return;
+    }
+
+    const userDocRef = doc(db, 'users', user.uid);
+
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setUserData(docSnap.data());
+      } else {
+        console.log("No such document!");
+        setUserData(null);
+      }
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching user data:", error);
+      Alert.alert("Error", "Could not fetch user profile.");
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [navigation]);
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      navigation.navigate('WelcomeScreen');
+    } catch (error) {
+      Alert.alert('Sign Out Error', error.message);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#00BFFF" />
+        <Text style={styles.loadingText}>Loading profile...</Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -10,35 +60,35 @@ const ProfileScreen = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Icon name="arrow-left" size={28} color="#fff" />
         </TouchableOpacity>
-        <View style={{ flex: 1, alignItems: 'center' }}>
+        <View style={styles.headerTitleWrapper}>
           <Text style={styles.headerTitle}>PROFILE</Text>
         </View>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.profileCard}>
           <Icon name="account-circle" size={100} color="#00BFFF" style={styles.profileIcon} />
-          <Text style={styles.profileName}>John Doe</Text>
-          <Text style={styles.profileEmail}>john.doe@example.com</Text>
+          <Text style={styles.profileName}>{userData?.name ?? 'User'}</Text>
+          <Text style={styles.profileEmail}>{userData?.email ?? 'N/A'}</Text>
         </View>
         <View style={styles.infoCard}>
           <Text style={styles.infoTitle}>Account Information</Text>
           <View style={styles.infoRow}>
             <Icon name="car" size={20} color="#00BFFF" style={styles.infoIcon} />
             <Text style={styles.infoLabel}>Vehicle:</Text>
-            <Text style={styles.infoText}>Toyota Camry</Text>
+            <Text style={styles.infoText}>{userData?.vehicle ?? 'N/A'}</Text>
           </View>
           <View style={styles.infoRow}>
             <Icon name="map-marker-outline" size={20} color="#00BFFF" style={styles.infoIcon} />
             <Text style={styles.infoLabel}>Location:</Text>
-            <Text style={styles.infoText}>San Francisco, CA</Text>
+            <Text style={styles.infoText}>{userData?.location ?? 'N/A'}</Text>
           </View>
           <View style={styles.infoRow}>
             <Icon name="phone" size={20} color="#00BFFF" style={styles.infoIcon} />
             <Text style={styles.infoLabel}>Phone:</Text>
-            <Text style={styles.infoText}>(123) 456-7890</Text>
+            <Text style={styles.infoText}>{userData?.phone ?? 'N/A'}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
           <Text style={styles.logoutButtonText}>Log Out</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -61,6 +111,16 @@ const ProfileScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#111',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#fff',
+    marginTop: 10,
+  },
   container: {
     flex: 1,
     backgroundColor: '#111',
@@ -68,19 +128,22 @@ const styles = StyleSheet.create({
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Changed to justify content between items
+    justifyContent: 'space-between',
     backgroundColor: '#000',
     height: 56,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#222',
   },
+  headerTitleWrapper: {
+    flex: 1,
+    alignItems: 'center',
+  },
   headerTitle: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 18,
     letterSpacing: 1,
-    textAlign: 'center',
   },
   scrollContent: {
     padding: 20,

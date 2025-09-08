@@ -1,26 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-const trips = [
-  { date: '2023-11-28', description: 'Excellent Drive, smooth and', score: 92, status: 'good' },
-  { date: '2023-11-27', description: 'Careful Trip, some mild braking', score: 75, status: 'average' },
-  { date: '2023-11-26', description: 'Good Journey, few sharp turns', score: 88, status: 'good' },
-  { date: '2023-11-25', description: 'Challenging Drive, frequent', score: 58, status: 'poor' },
-  { date: '2023-11-24', description: 'Long Commute, consistent', score: 85, status: 'good' },
-  { date: '2023-11-23', description: 'Short Trip, aggressive', score: 65, status: 'poor' },
-  { date: '2023-11-22', description: 'Night Drive, exemplary', score: 95, status: 'excellent' },
-  { date: '2023-11-21', description: 'Weekend Outing, some hard', score: 70, status: 'average' },
-  { date: '2023-11-20', description: 'City Driving, low score due to', score: 50, status: 'poor' },
-  { date: '2023-11-19', description: 'Highway Trip, very smooth.', score: 90, status: 'excellent' },
-];
+import { collection, query, orderBy, onSnapshot, doc } from 'firebase/firestore';
+import { auth, db } from '../FirebaseConfig';
 
 const getStatusStyle = (score) => {
   if (score >= 90) {
     return { backgroundColor: '#00BFFF', color: '#111' };
   } else if (score >= 70 && score < 90) {
-    return { backgroundColor: '#00BFFF', color: '#111' };
-  } else if (score >= 50 && score < 70) {
     return { backgroundColor: '#FFC107', color: '#111' };
   } else {
     return { backgroundColor: '#FF5733', color: '#fff' };
@@ -28,6 +15,81 @@ const getStatusStyle = (score) => {
 };
 
 const TripHistoryScreen = ({ navigation }) => {
+  const [trips, setTrips] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) {
+      navigation.navigate('AuthScreen');
+      return;
+    }
+
+    // Reference to the 'trips' sub-collection of the current user
+    const tripsRef = collection(db, 'users', user.uid, 'trips');
+    const q = query(tripsRef, orderBy('date', 'desc'));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const fetchedTrips = [];
+      querySnapshot.forEach((doc) => {
+        fetchedTrips.push({ id: doc.id, ...doc.data() });
+      });
+      setTrips(fetchedTrips);
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching trips:", error);
+      Alert.alert("Error", "Could not fetch trip history.");
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [navigation]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#00BFFF" />
+        <Text style={styles.loadingText}>Loading history...</Text>
+      </View>
+    );
+  }
+
+  // New conditional rendering for when there are no trips
+  if (trips.length === 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <View style={styles.headerBar}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon name="arrow-left" size={28} color="#fff" />
+          </TouchableOpacity>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Text style={styles.headerTitle}>TRIP HISTORY</Text>
+          </View>
+        </View>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No trips recorded yet.</Text>
+          <Text style={styles.emptySubText}>Start a drive from the Dashboard to see your history!</Text>
+        </View>
+        <View style={styles.bottomNav}>
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('MainDashboardScreen')}>
+            <Icon name="home" size={24} color="#fff" />
+            <Text style={styles.navText}>Dashboard</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('TripHistoryScreen')}>
+            <Icon name="history" size={24} color="#00BFFF" />
+            <Text style={styles.navTextActive}>History</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('ProfileScreen')}>
+            <Icon name="account" size={24} color="#fff" />
+            <Text style={styles.navText}>Profile</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -40,14 +102,18 @@ const TripHistoryScreen = ({ navigation }) => {
         </View>
       </View>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {trips.map((trip, index) => (
-          <TouchableOpacity key={index} style={styles.tripCard} onPress={() => navigation.navigate('TripSummaryScreen')}>
+        {trips.map((trip) => (
+          <TouchableOpacity 
+            key={trip.id} 
+            style={styles.tripCard} 
+            onPress={() => navigation.navigate('TripSummaryScreen', { tripId: trip.id })}
+          >
             <View style={styles.tripDetails}>
-              <Text style={styles.tripDate}>{trip.date}</Text>
-              <Text style={styles.tripDescription}>{trip.description}</Text>
+              <Text style={styles.tripDate}>{new Date(trip.date).toLocaleDateString()}</Text>
+              <Text style={styles.tripDescription}>{trip.summary_description}</Text>
             </View>
             <View style={styles.tripScoreContainer}>
-              <Text style={[styles.tripScore, getStatusStyle(trip.score)]}>{trip.score}</Text>
+              <Text style={[styles.tripScore, getStatusStyle(trip.driving_score)]}>{trip.driving_score}</Text>
               <Icon name="chevron-right" size={24} color="#fff" />
             </View>
           </TouchableOpacity>
@@ -75,6 +141,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#111',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    color: '#fff',
+    marginTop: 10,
   },
   headerBar: {
     flexDirection: 'row',
@@ -165,6 +241,24 @@ const styles = StyleSheet.create({
     color: '#00BFFF',
     fontSize: 12,
     marginTop: 2,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 20,
+    color: '#fff',
+    fontWeight: 'bold',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySubText: {
+    fontSize: 16,
+    color: '#aaa',
+    textAlign: 'center',
   },
 });
 

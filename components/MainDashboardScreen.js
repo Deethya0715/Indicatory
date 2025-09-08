@@ -1,19 +1,51 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { signOut } from 'firebase/auth';
-import { auth } from '../FirebaseConfig';
+import { onSnapshot, doc } from 'firebase/firestore';
+import { auth, db } from '../FirebaseConfig';
 
 const MainDashboardScreen = ({ navigation }) => {
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      // Navigate to the WelcomeScreen after successful sign out
-      navigation.navigate('WelcomeScreen');
-    } catch (error) {
-      Alert.alert('Sign Out Error', error.message);
+  const [drivingScore, setDrivingScore] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) {
+      // If no user is logged in, navigate to the AuthScreen
+      navigation.navigate('AuthScreen');
+      return;
     }
-  };
+
+    const userDocRef = doc(db, 'users', user.uid);
+    
+    // Set up a real-time listener for the user's document
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const userData = docSnap.data();
+        setDrivingScore(userData.drivingScore || 0); // Use a default value of 0 if score isn't in db
+      } else {
+        console.log("No user data found!");
+        setDrivingScore(0);
+      }
+      setLoading(false);
+    }, (error) => {
+      console.error("Error fetching user data:", error);
+      Alert.alert("Error", "Could not fetch dashboard data.");
+      setLoading(false);
+    });
+
+    return () => unsubscribe(); // Clean up the listener on unmount
+  }, [navigation]);
+
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#00BFFF" />
+        <Text style={styles.loadingText}>Loading dashboard...</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,9 +58,9 @@ const MainDashboardScreen = ({ navigation }) => {
         <View style={styles.scoreCard}>
           <View style={styles.scoreHeader}>
             <Text style={styles.scoreTitle}>YOUR DRIVING SCORE</Text>
-            <Text style={styles.scoreStatus}>Good</Text>
+            <Text style={styles.scoreStatus}>{drivingScore > 80 ? 'Excellent' : 'Good'}</Text>
           </View>
-          <Text style={styles.scoreValue}>85</Text>
+          <Text style={styles.scoreValue}>{drivingScore}</Text>
           <Text style={styles.scoreFeedback}>Excellent! Keep up the great driving habits.</Text>
         </View>
         {/* Start Drive Button */}
@@ -78,10 +110,6 @@ const MainDashboardScreen = ({ navigation }) => {
             </View>
           </View>
         </ScrollView>
-        {/* Sign Out Button */}
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-          <Text style={styles.signOutButtonText}>Sign Out</Text>
-        </TouchableOpacity>
       </ScrollView>
       {/* Bottom Navigation Bar */}
       <View style={styles.bottomNav}>
@@ -124,6 +152,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#111',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#fff',
+    fontSize: 16,
   },
   header: {
     paddingTop: 40,
@@ -301,26 +340,6 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     marginTop: 2,
-  },
-  signOutButton: {
-    width: '90%',
-    height: 50,
-    backgroundColor: '#f44336',
-    borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 20,
-    shadowColor: '#d32f2f',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 10,
-  },
-  signOutButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 
